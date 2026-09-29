@@ -1,23 +1,17 @@
 import { getHomeData } from "@/lib/data";
 import { Profile } from "@/components/Profile";
 import { TopNav } from "@/components/TopNav";
-import { Featured } from "@/components/sections/Featured";
-import { Debriefs } from "@/components/sections/Debriefs";
-import { Mercato } from "@/components/sections/Mercato";
-import { Shorts } from "@/components/sections/Shorts";
-import { Lives } from "@/components/sections/Lives";
-import { Vestiaire } from "@/components/sections/Vestiaire";
+import { HomeBuilder } from "@/components/HomeBuilder";
 
 // Régénère la page toutes les 5 min (données synchronisées depuis Supabase).
 export const revalidate = 300;
 
 export default async function Home() {
-  const data = await getHomeData();
-  const { counts } = data;
+  const { profile, counts, layout } = await getHomeData();
 
   return (
     <div className="layout">
-      <Profile profile={data.profile} />
+      <Profile profile={profile} />
 
       <main className="content">
         <TopNav
@@ -31,15 +25,10 @@ export default async function Home() {
           ]}
         />
 
-        <Featured {...data} />
-        <Debriefs playlist={data.playlist} debriefs={data.debriefs} total={counts.debriefs} />
-        <Mercato mercatoDossier={data.mercatoDossier} mercatoTiles={data.mercatoTiles} total={counts.mercato} />
-        <Shorts shorts={data.shorts} total={counts.shorts} />
-        <Lives liveSlots={data.liveSlots} />
-        <Vestiaire community={data.community} links={data.links} />
+        <HomeBuilder initialLayout={layout} counts={counts} />
 
         <footer className="footer">
-          <span>© 2026 {data.profile.name} · Contenus synchronisés depuis YouTube, Instagram, TikTok, Twitch &amp; X</span>
+          <span>© 2026 {profile.name} · Contenus synchronisés depuis YouTube, Instagram, TikTok, Twitch &amp; X</span>
           <a href="https://orion-studio.io">Site réalisé par Orion Studio</a>
         </footer>
       </main>
